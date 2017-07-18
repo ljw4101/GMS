@@ -17,8 +17,8 @@ public class MemberServiceImpl implements MemberService{
 	
 	@Override
 	public String addMember(MemberBean member) {
-		int rs = MemberDAOImpl.getInstance().insert(member);
-		String msg = (rs==1)?"insert 성공":"insert 실패";
+		String rs = MemberDAOImpl.getInstance().insert(member);
+		String msg = (rs.equals("1"))?"insert 성공":"insert 실패";
 		
 		return msg;
 	}
@@ -29,7 +29,7 @@ public class MemberServiceImpl implements MemberService{
 	}
 
 	@Override
-	public int countMembers() {
+	public String countMembers() {
 		return MemberDAOImpl.getInstance().count();
 	}
 
@@ -51,8 +51,8 @@ public class MemberServiceImpl implements MemberService{
 
 		String msg="";
 		MemberBean member = new MemberBean();
-		int rs = MemberDAOImpl.getInstance().update(bean);
-		msg = (rs==1)?"update 성공":"update 실패";
+		String rs = MemberDAOImpl.getInstance().update(bean);
+		msg = (rs.equals("1"))?"update 성공":"update 실패";
 		
 		return msg;
 	}
@@ -60,8 +60,8 @@ public class MemberServiceImpl implements MemberService{
 	@Override
 	public String removeMember(String id) {
 		String msg="";
-		int rs = MemberDAOImpl.getInstance().delete(id);
-		msg = (rs==1)?"delete 성공":"delete 실패";
+		String rs = MemberDAOImpl.getInstance().delete(id);
+		msg = (rs.equals("1"))?"delete 성공":"delete 실패";
 		
 		return msg;
 	}

@@ -1,12 +1,3 @@
---id, pw, ssn, name, regdate
-SELECT * FROM MEMBER;
-
-delete from MEMBER;
-
-select count(*) as count from MEMBER;
-
-select * from MEMBER where name = 'jihun';
-
 --dummy
 INSERT INTO MEMBER(id, name, pw, ssn, regdate) VALUES ('hong','gildong','a','920615-234678',SYSDATE);
 insert into member(id, name, pw, ssn, regdate) values ('kang','Danel','1','940101-1234517',SYSDATE);
@@ -21,7 +12,14 @@ insert into member(id, name, pw, ssn, regdate) values ('you', 'sunho','1','94062
 insert into member(id, name, pw, ssn, regdate) values ('jung2', 'sehun','1','970101-2236567',SYSDATE);
 insert into member(id, name, pw, ssn, regdate) values ('jun', 'jihun','1','970615-2234577',SYSDATE);
 
-SELECT * FROM member WHERE id='lee';
+SELECT * FROM MEMBER;
+select count(*) as count from MEMBER;
+SELECT * FROM member WHERE id='hong';
+
+update MEMBER set pw='2' where id='hong';
+
+delete from MEMBER where id='test';
+
 
 insert into board(article_seq, id, title, content, hitcount, regdate)values(article_seq.nextval, 'hong', 'title hong', '반짝이는 이상을 발휘하기 꽃이 말이다',0,SYSDATE);
 insert into board(article_seq, id, title, content, hitcount, regdate)values(article_seq.nextval, 'park', 'title park', '얼음과 거선의 원대하고, 새가 작고 운다',0,SYSDATE);
@@ -37,3 +35,5 @@ insert into board(article_seq, id, title, content, hitcount, regdate)values(arti
 insert into board(article_seq, id, title, content, hitcount, regdate)values(article_seq.nextval, 'kang', 'title kang2', '끝까지 그들의 그와 힘차게 자신과 구하지 위하여 황금시대다',0,SYSDATE);
 
 select * from board;
+
+

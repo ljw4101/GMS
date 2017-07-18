@@ -3,32 +3,32 @@ package com.hanbit.gms.dao;
 import java.util.ArrayList;
 import java.util.List;
 import com.hanbit.gms.constant.DB;
+import com.hanbit.gms.constant.SQL;
+import com.hanbit.gms.constant.Vendor;
 import com.hanbit.gms.dao.MemberDAO;
 import com.hanbit.gms.domain.MemberBean;
+import com.hanbit.gms.factory.DatabaseFactory;
+
 import java.sql.*; //0
 
 public class MemberDAOImpl implements MemberDAO{
 	
 	//public static MemberDAOImpl instance = new MemberDAOImpl();
 	public static MemberDAOImpl getInstance() {
-		try {
-			Class.forName(DB.DRIVER);
-		} catch (ClassNotFoundException e) {
-			System.out.println("DRIVER load failed");
-			e.printStackTrace();
-		}
 		return new MemberDAOImpl();
 	}
 	private MemberDAOImpl(){}	//생성자를 private로 설정하면 다른곳에서 호출 못함
 	
-	
 	@Override
-	public int insert(MemberBean member) {
-		int rs = 0;
-		try {
-			rs = DriverManager.getConnection(DB.URL, DB.USERID, DB.PASSWORD).createStatement().executeUpdate(
-					String.format("insert into %s(%s, %s, %s, %s, %s)values('%s', '%s', '%s', '%s', SYSDATE)", DB.TABLE_MEMBER, DB.MEM_ID, DB.MEM_NAME, DB.MEM_PW, DB.MEM_SSN, DB.MEM_REGDATE,
-							member.getId(), member.getName(), member.getPw(), member.getSSN()));
+	public String insert(MemberBean member) {
+		String rs = "";
+		try {			
+			PreparedStatement pstmt = DatabaseFactory.createDataBase(Vendor.ORACLE, DB.USERNAME, DB.PASSWORD).getConnection().prepareStatement(SQL.MEMBER_INSERT);
+			pstmt.setString(1, member.getId());
+			pstmt.setString(2, member.getName());
+			pstmt.setString(3, member.getPw());
+			pstmt.setString(4, member.getSSN());
+			rs=String.valueOf(pstmt.executeUpdate());	
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -37,26 +37,28 @@ public class MemberDAOImpl implements MemberDAO{
 	}
 
 	@Override
-	public int update(MemberBean member) {
-		int rs = 0;	
+	public String update(MemberBean member) {
+		String rs = "";	
 		try {
-			rs = DriverManager.getConnection(DB.URL, DB.USERID, DB.PASSWORD).createStatement().executeUpdate(
-					String.format("update %s set %s='%s', %s='%s', %s='%s', %s=SYSDATE where %s = '%s'", 
-							DB.TABLE_MEMBER, DB.MEM_NAME, member.getName(), DB.MEM_PW, member.getPw(), DB.MEM_SSN, member.getSSN(), DB.MEM_REGDATE, DB.MEM_ID, member.getId()));
+			PreparedStatement pstmt = DatabaseFactory.createDataBase(Vendor.ORACLE, DB.USERNAME, DB.PASSWORD).getConnection().prepareStatement(SQL.MEMBER_UPDATE);
+			pstmt.setString(1, member.getName());
+			pstmt.setString(2, member.getPw());
+			pstmt.setString(3, member.getSSN());
+			pstmt.setString(4, member.getId());
+			rs = String.valueOf(pstmt.executeUpdate());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 		return rs;
 	}
 
 	@Override
-	public int delete(String id) {
-		int rs = 0;
+	public String delete(String id) {
+		String rs = "";
 		try {
-			rs = DriverManager.getConnection(DB.URL, DB.USERID, DB.PASSWORD).createStatement().executeUpdate(
-					String.format("delete from %s where %s='%s'", DB.TABLE_MEMBER, DB.MEM_ID, id));
+			PreparedStatement pstmt = DatabaseFactory.createDataBase(Vendor.ORACLE, DB.USERNAME, DB.PASSWORD).getConnection().prepareStatement(SQL.MEMBER_DELETE);
+			pstmt.setString(1, id);
+			rs = String.valueOf(pstmt.executeUpdate());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -68,7 +70,7 @@ public class MemberDAOImpl implements MemberDAO{
 		List<MemberBean> list = new ArrayList<>();	
 		MemberBean bean = null;
 		try {
-			ResultSet rs = DriverManager.getConnection(DB.URL, DB.USERID, DB.PASSWORD).createStatement().executeQuery(String.format("select * from %s", DB.TABLE_MEMBER));
+			ResultSet rs = DatabaseFactory.createDataBase(Vendor.ORACLE, DB.USERNAME, DB.PASSWORD).getConnection().prepareStatement(SQL.MEMBER_LIST).executeQuery();
 			while(rs.next()){
 				bean = new MemberBean(); //new MemberBean(); heap에 넣어지는 주소지가 됨
 				bean.setId(rs.getString(DB.MEM_ID));
@@ -85,12 +87,12 @@ public class MemberDAOImpl implements MemberDAO{
 	}
 
 	@Override
-	public int count() {
-		int cnt=0;
+	public String count() {
+		String cnt="";
 		try {
-			ResultSet rs = DriverManager.getConnection(DB.URL, DB.USERID, DB.PASSWORD).createStatement().executeQuery(String.format("select count(*) as cnt from %s", DB.TABLE_MEMBER));
+			ResultSet rs = DatabaseFactory.createDataBase(Vendor.ORACLE, DB.USERNAME, DB.PASSWORD).getConnection().prepareStatement(SQL.MEMBER_COUNT).executeQuery();
 			if(rs.next()){
-				cnt = Integer.parseInt(rs.getString("cnt"));
+				cnt = rs.getString("cnt");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -103,9 +105,10 @@ public class MemberDAOImpl implements MemberDAO{
 		MemberBean bean = new MemberBean();
 		
 		try {
-			Connection conn = DriverManager.getConnection(DB.URL, DB.USERID, DB.PASSWORD);
-			Statement stmt = conn.createStatement();
-			ResultSet rs = stmt.executeQuery(String.format("SELECT * FROM member WHERE id='%s'", id));
+			PreparedStatement pstmt = DatabaseFactory.createDataBase(Vendor.ORACLE, DB.USERNAME, DB.PASSWORD).getConnection().prepareStatement(SQL.MEMBER_FINDBYID);
+			pstmt.setString(1, id);
+			ResultSet rs = pstmt.executeQuery();
+			
 			if(rs.next()){	//return값이 한개이므로 if사용
 				bean.setId(rs.getString(DB.MEM_ID));
 				bean.setName(rs.getString(DB.MEM_NAME));
@@ -125,7 +128,10 @@ public class MemberDAOImpl implements MemberDAO{
 		MemberBean bean = null;
 		
 		try {
-			ResultSet rs = DriverManager.getConnection(DB.URL, DB.USERID, DB.PASSWORD).createStatement().executeQuery(String.format("select * from %s where %s = '%s'", DB.TABLE_MEMBER, DB.MEM_NAME, name));
+			PreparedStatement pstmt = DatabaseFactory.createDataBase(Vendor.ORACLE, DB.USERNAME, DB.PASSWORD).getConnection().prepareStatement(SQL.MEMBER_FINDBYNAME);
+			pstmt.setString(1, name);
+			ResultSet rs = pstmt.executeQuery();
+			
 			while(rs.next()){
 				bean = new MemberBean();
 				bean.setId(rs.getString(DB.MEM_ID));

@@ -12,9 +12,9 @@ public class JDBCTest {
 		Connection conn=null;
 		
 		try {
-			Class.forName(DB.DRIVER); 
+			Class.forName(DB.ORACLE_DRIVER); 
 			//new를 사용하지 않고 동적으로 로딩하면 DriverManager를 사용가능하다.	894p
-			conn = DriverManager.getConnection(DB.URL, DB.USERID, DB.PASSWORD);
+			conn = DriverManager.getConnection(DB.ORACLE_URL, DB.USERNAME, DB.PASSWORD);
 			Statement stmt = conn.createStatement();
 			String sql="SELECT * FROM member WHERE id='lee'";
 			ResultSet rs = stmt.executeQuery(sql);

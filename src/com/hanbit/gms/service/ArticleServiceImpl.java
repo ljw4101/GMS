@@ -15,22 +15,22 @@ public class ArticleServiceImpl implements ArticleService{
 	
 	@Override
 	public String write(ArticleBean bean) {
-		int rs = ArticleDAOImpl.getInstance().insert(bean);
-		String msg = (rs==1)?"게시글 등록 성공":"게시글 등록 실패";
+		String rs = ArticleDAOImpl.getInstance().insert(bean);
+		String msg = (rs.equals("1"))?"게시글 등록 성공":"게시글 등록 실패";
 		return msg;
 	}
 
 	@Override
 	public String modify(ArticleBean bean) {
-		int rs = ArticleDAOImpl.getInstance().update(bean);
-		String msg = (rs==1)?"게시글 수정 성공":"게시글 수정 실패";
+		String rs = ArticleDAOImpl.getInstance().update(bean);
+		String msg = (rs.equals("1"))?"게시글 수정 성공":"게시글 수정 실패";
 		return msg;
 	}
 
 	@Override
 	public String remove(int seq) {
-		int rs = ArticleDAOImpl.getInstance().delete(seq);
-		String msg = (rs==1)?"게시글 삭제 성공":"게시글 삭제 실패";
+		String rs = ArticleDAOImpl.getInstance().delete(seq);
+		String msg = (rs.equals("1"))?"게시글 삭제 성공":"게시글 삭제 실패";
 		return msg;
 	}
 
@@ -40,7 +40,7 @@ public class ArticleServiceImpl implements ArticleService{
 	}
 
 	@Override
-	public int countArticles() {
+	public String countArticles() {
 		return ArticleDAOImpl.getInstance().count();
 	}
 

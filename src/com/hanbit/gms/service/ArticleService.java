@@ -11,7 +11,7 @@ public interface ArticleService {
 	public String remove(int seq);
 	//getter
 	public List<ArticleBean> list();
-	public int countArticles();
+	public String countArticles();
 	public ArticleBean findBySeq(int seq);
 	public List<ArticleBean> findById(String id);	
 }

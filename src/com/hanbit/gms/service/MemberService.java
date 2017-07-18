@@ -10,7 +10,7 @@ public interface MemberService {
 	public String removeMember(String id);
 	//getter
 	public List<MemberBean> getMembers();	//목록: MemberBean을 배열로 담음
-	public int countMembers();
+	public String countMembers();
 	public MemberBean findByID(String id);
 	public List<MemberBean> findByName(String name);
 }
